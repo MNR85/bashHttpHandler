@@ -23,3 +23,22 @@ if [[ $(type -t handler) == function ]]; then
 fi
 ```
 And `handler` function is defined in `routeRequest` automatically
+
+# Apache config
+First you need to define directive like this. In this config after succed in authentication (with htpasswd/ldap) 'admin' script will run.
+
+```
+ScriptAlias /admin/ /var/www/bin/admin.sh/
+
+<Location /admin>
+    AuthType Basic
+    AuthName "Admin Access"
+    AuthBasicProvider ldap file
+    AuthLDAPURL ldap://url:389/ou=***,dc=***,dc=***?uid?sub
+    AuthUserFile /etc/apache2/git.passwd
+    Require valid-user
+</Location>
+```
+Apache will set parameters in env. so in admin.sh you can see what is set in ENV vars and use what you want.
+
+Also you can add some custom log in apache config for more debug.. I have another repo for apache config https://github.com/MNR85/Apache-sample-conf
